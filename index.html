@@ -76,7 +76,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .sb-ct{font-size:11px;color:rgba(255,255,255,.6);font-family:'IBM Plex Mono',monospace;}
 .sb-cs{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-top:3px;}
 .sb-cl{font-size:11px;}
-.sn0 .sb-cs,.sn0 .sb-cl{color:#5DD6A0;}.sn1 .sb-cs,.sn1 .sb-cl{color:#F5C842;}.sn2 .sb-cs,.sn2 .sb-cl{color:#F5944A;}.sn3 .sb-cs,.sn3 .sb-cl{color:#F56060;}
+.sn0 .sb-cs,.sn0 .sb-cl{color:#5DD6A0;}.sn1 .sb-cs,.sn1 .sb-cl{color:#ffeb3b;}.sn2 .sb-cs,.sn2 .sb-cl{color:#ffc107;}.sn3 .sb-cs,.sn3 .sb-cl{color:#ff8a65;}
 .sb-del{position:absolute;top:6px;right:8px;background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:13px;opacity:0;}
 .sb-card:hover .sb-del{opacity:1;}
 .sb-none{font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:18px 0;}
@@ -158,17 +158,18 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .rpts{font-size:13px;color:rgba(255,255,255,.4);}
 .rlv{font-size:28px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.3;word-break:break-word;}
 .rhi{display:flex;flex-direction:column;gap:7px;}
-.rhi-row{display:flex;align-items:flex-start;gap:8px;}
-.rhi-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;margin-top:6px;opacity:.8;}
-.rhi-txt{font-size:26px;font-weight:500;color:#fff;line-height:1.6;word-break:break-word;}
+.rhi-row{display:flex;align-items:flex-start;gap:10px;}
+.rhi-num{font-size:22px;font-weight:700;flex-shrink:0;line-height:1.4;opacity:.75;}
+.rhi-txt{font-size:26px;font-weight:500;color:#fff;line-height:1.4;word-break:break-word;}
 .rbd{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;}
 .mbadge{font-size:11px;font-family:'IBM Plex Mono',monospace;padding:3px 9px;border-radius:6px;font-weight:700;background:#fff;}
 .rbox.c0 .mbadge{color:#0F5C35;}
 .rbox.c1 .mbadge{color:#7A5500;}
 .rbox.c2 .mbadge{color:#DC5048;}
-.rbox.c0{background:#0F5C35;}.rbox.c0 .rnum,.rbox.c0 .rlv{color:#5DD6A0;}.rbox.c0 .rhi-dot{background:#5DD6A0;}
-.rbox.c1{background:#FED32B;}.rbox.c1 .rnum,.rbox.c1 .rlv{color:#5C3D00;}.rbox.c1 .rhi-dot{background:#5C3D00;}.rbox.c1 .rhi-txt{color:#3D2800;}.rbox.c1 .rpts{color:rgba(0,0,0,.45);}.rbox.c1 .r-left{border-right-color:rgba(0,0,0,.15);}
-.rbox.c2{background:#DC5048;}.rbox.c2 .rnum,.rbox.c2 .rlv{color:#fff;}.rbox.c2 .rhi-dot{background:#fff;}.rbox.c2 .rhi-txt{color:#fff;}.rbox.c2 .rpts{color:rgba(255,255,255,.6);}.rbox.c2 .r-left{border-right-color:rgba(255,255,255,.2);}
+.rbox.c0{background:#0F5C35;}.rbox.c0 .rnum,.rbox.c0 .rlv{color:#5DD6A0;}.rbox.c0 .rhi-num{color:#5DD6A0;}.rbox.c0 .rhi-txt{color:rgba(255,255,255,.9);}.rbox.c0 .rpts{color:rgba(255,255,255,.5);}
+.rbox.c1{background:#ffeb3b;}.rbox.c1 .rnum,.rbox.c1 .rlv{color:#5C3D00;}.rbox.c1 .rhi-num{color:#5C3D00;}.rbox.c1 .rhi-txt{color:#3D2800;}.rbox.c1 .rpts{color:rgba(0,0,0,.45);}.rbox.c1 .r-left{border-right-color:rgba(0,0,0,.15);}
+.rbox.c2{background:#ffc107;}.rbox.c2 .rnum,.rbox.c2 .rlv{color:#4A2800;}.rbox.c2 .rhi-num{color:#4A2800;}.rbox.c2 .rhi-txt{color:#3D2000;}.rbox.c2 .rpts{color:rgba(0,0,0,.45);}.rbox.c2 .r-left{border-right-color:rgba(0,0,0,.15);}
+.rbox.c3{background:#bf360c;}.rbox.c3 .rnum,.rbox.c3 .rlv{color:#fff;}.rbox.c3 .rhi-num{color:rgba(255,255,255,.75);}.rbox.c3 .rhi-txt{color:#fff;}.rbox.c3 .rpts{color:rgba(255,255,255,.6);}.rbox.c3 .r-left{border-right-color:rgba(255,255,255,.2);}
 
 /* PC RIGHT PANEL */
 @media(min-width:900px){
@@ -197,7 +198,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .rec{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,40,112,.04);}
 .rec:hover{box-shadow:0 2px 8px rgba(0,40,112,.1);}
 .spill{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
-.p0{background:var(--gbg);color:var(--green);}.p1{background:var(--ybg);color:var(--yellow);}.p2{background:var(--obg);color:var(--orange);}.p3{background:var(--rbg);color:var(--red);}
+.p0{background:#E2F5EC;color:#0F5C35;}.p1{background:#fffde7;color:#5C3D00;}.p2{background:#fff8e1;color:#4A2800;}.p3{background:#fbe9e7;color:#bf360c;}
 .rinfo{flex:1;min-width:0;}
 .rtime{font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
 .rlevel{font-size:14px;font-weight:600;margin-top:1px;}
@@ -445,10 +446,11 @@ function sR(v){if(v<=8||v>=28)return 3;if(v>=21&&v<=27)return 2;if(v>=9&&v<=14)r
 function sSBP(v){if(v<=90||v>=220)return 3;if(v>=91&&v<=100)return 2;if(v>=101&&v<=110)return 1;return 0;}
 function sSO(v){if(v<=90)return 3;if(v>=91&&v<=93)return 2;if(v>=94&&v<=95)return 1;return 0;}
 function risk(t,hasAny3,ert3items){
-  if(hasAny3||t>=6)return{c:'c2',g:'g2',sp:'p2',l:'ความเสี่ยงสูง — Call ERT',h:'Call ERT ทันที · ให้การดูแลเบื้องต้นระหว่างรอทีม'+(ert3items&&ert3items.length?' · พบค่าวิกฤต: '+ert3items.join(', '):'')};
+  if(hasAny3||t>=6)return{c:'c3',g:'g3',sp:'p3',l:'ความเสี่ยงสูง — Call ERT',h:'Call ERT ทันที , ให้การดูแลเบื้องต้นระหว่างรอทีม'+(ert3items&&ert3items.length?' , พบค่าวิกฤต: '+ert3items.join(', '):'')};
   if(t<=0)return{c:'c0',g:'g0',sp:'p0',l:'ปกติ',h:''};
-  if(t<=2)return{c:'c0',g:'g0',sp:'p0',l:'ปกติ',h:'รายงาน In charge nurse , ประเมินอาการซ้ำ'};
-  return{c:'c1',g:'g1',sp:'p1',l:'เฝ้าระวัง',h:'In charge nurse ประเมินซ้ำ , รายงานแพทย์เวร/เจ้าของไข้ , วัด V/S, SpO₂ ทุก 30 นาที (ชั่วโมงแรก)'};
+  if(t<=2)return{c:'c1',g:'g1',sp:'p1',l:'เสี่ยงต่ำ',h:'รายงาน In-charge nurse , In-charge nurse ประเมินอาการซ้ำและติดตามอาการใกล้ชิดขึ้นทุก 2 ชั่วโมง , อาจพิจารณารายงานแพทย์เจ้าของไข้ตามความเหมาะสม'};
+  if(t<=5)return{c:'c2',g:'g2',sp:'p2',l:'เฝ้าระวัง',h:'In charge nurse ประเมินซ้ำ , รายงานแพทย์เวร/เจ้าของไข้ , วัด V/S, SpO₂ ทุก 30 นาที (ชั่วโมงแรก)'};
+  return{c:'c3',g:'g3',sp:'p3',l:'ความเสี่ยงสูง — Call ERT',h:'Call ERT ทันที , ให้การดูแลเบื้องต้นระหว่างรอทีม'};
 }
 
 function getBP(){var r=(document.getElementById('f-bp').value||'').trim();var p=r.split('/');return{sbp:parseFloat(p[0]),dbp:parseFloat(p[1]||''),raw:r};}
@@ -499,7 +501,7 @@ function updBox(bid,nid,lid,hid,did,sc,arr){
   box.className='rbox '+rk.c;
   document.getElementById(nid).textContent=tot;
   document.getElementById(lid).textContent=rk.l;
-  document.getElementById(hid).innerHTML=rk.h?rk.h.split(' · ').map(function(s){return'<div class="rhi-row"><div class="rhi-dot"></div><div class="rhi-txt">'+s+'</div></div>';}).join(''):'';
+  document.getElementById(hid).innerHTML=rk.h?rk.h.split(' , ').map(function(s,i){return'<div class="rhi-row"><div class="rhi-num">'+(i+1)+'.</div><div class="rhi-txt">'+s+'</div></div>';}).join(''):'';
   var lb=['T','HR','RR','SBP','SpO₂','AVPU'];
   var vs=[sc.temp,sc.pulse,sc.rr,sc.sbp,sc.spo2,sc.avpu];
   var h='';
@@ -570,7 +572,7 @@ function renderSb(){
   if(!recs.length){el.innerHTML='<div class="sb-none">ยังไม่มีการบันทึก</div>';return;}
   var s=recs.slice().sort(function(a,b){return b.datetime.localeCompare(a.datetime);});
   el.innerHTML=s.map(function(r){
-    var n='sn'+(r.total<=2?0:r.total<=4?1:r.total<=6?2:3);
+    var n='sn'+(r.total<=0?0:r.total<=2?1:r.total<=5?2:3);
     return'<div class="sb-card '+n+(editId===r.id?' on':'')+'" onclick="loadRec(\''+r.id+'\')">'
       +'<button class="sb-del" onclick="delRec(\''+r.id+'\',event)">✕</button>'
       +'<div class="sb-ct">'+r.datetime+'</div>'
@@ -586,7 +588,7 @@ function renderRecs(){
   if(!recs.length){el.innerHTML='<div class="norec"><div style="font-size:38px;margin-bottom:10px">📋</div>ยังไม่มีการบันทึก</div>';return;}
   var s=recs.slice().sort(function(a,b){return b.datetime.localeCompare(a.datetime);});
   el.innerHTML=s.map(function(r){
-    var col=r.total<=2?'green':r.total<=4?'yellow':r.total<=6?'orange':'red';
+    var col=r.total<=0?'green':r.total<=2?'yellow':r.total<=5?'orange':'red';
     return'<div class="rec" onclick="loadRec(\''+r.id+'\')">'
       +'<div class="spill '+r.risk.sp+'">'+r.total+'</div>'
       +'<div class="rinfo"><div class="rtime">'+r.datetime+'</div>'
