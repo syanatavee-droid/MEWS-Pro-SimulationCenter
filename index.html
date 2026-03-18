@@ -54,7 +54,6 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   .content{padding:14px 13px 80px;}
   .ttabs{display:none!important;}
   .bottom-nav{display:flex!important;}
-  .pc-right{display:none!important;}
   .result-mob{display:block!important;}
 }
 
@@ -106,7 +105,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 /* ── ASSESS GRID (PC: 2-col form + right panel) ── */
 .assess-wrap{display:block;}
 @media(min-width:900px){
-  .assess-wrap{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+
 }
 .form-grid{display:flex;flex-direction:column;gap:10px;}
 @media(min-width:900px){
@@ -117,7 +116,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 /* ── FORM CARDS ── */
 .fc{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 15px;box-shadow:0 1px 4px rgba(0,40,112,.05);}
 .fh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.flabel{font-size:13px;font-weight:600;color:var(--navy);}
+.flabel{font-size:16px;font-weight:600;color:var(--navy);}
 .funit{font-size:11px;color:var(--muted);margin-top:1px;}
 .fhint{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.5;}
 .badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;}
@@ -126,7 +125,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .b-1{background:var(--ybg);color:var(--yellow);}
 .b-2{background:var(--obg);color:var(--orange);}
 .b-3{background:var(--rbg);color:var(--red);}
-.finput{width:100%;background:var(--s2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:16px;color:var(--text);font-family:'IBM Plex Mono',monospace;outline:none;-webkit-appearance:none;appearance:none;}
+.finput{width:100%;background:var(--s2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:22px;color:var(--text);font-family:'IBM Plex Mono',monospace;outline:none;-webkit-appearance:none;appearance:none;}
 .finput:focus{border-color:var(--navy);background:#fff;}
 .finput::placeholder{color:#B8C8DC;font-family:'Sarabun',sans-serif;font-size:13px;}
 .bphint{font-size:12px;color:var(--navy);font-family:'IBM Plex Mono',monospace;margin-top:6px;min-height:16px;}
@@ -149,34 +148,33 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .avpu-opt input:checked+label .abadge{color:var(--gold);}
 
 /* ── RESULT BOX ── */
-.rbox{background:var(--navy);border-radius:13px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:stretch;gap:0;}
+.rbox{background:var(--navy);border-radius:13px;padding:16px 18px;margin-bottom:14px;display:flex;align-items:stretch;gap:0;}
 .rbox.mob{margin-bottom:14px;}
-.r-left{display:flex;flex-direction:column;justify-content:center;padding-right:18px;border-right:1px solid rgba(255,255,255,.15);flex-shrink:0;min-width:110px;}
-.r-right{flex:1;padding-left:20px;display:flex;flex-direction:column;justify-content:center;}
+.r-left{display:flex;flex-direction:column;justify-content:center;padding-right:16px;border-right:1px solid rgba(255,255,255,.15);flex-shrink:0;width:100px;min-width:100px;max-width:100px;}
+.r-right{flex:1;min-width:0;padding-left:16px;display:flex;flex-direction:column;justify-content:center;overflow:hidden;}
 .rlabel{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.7px;font-weight:600;margin-bottom:6px;}
 .rrow{display:flex;align-items:baseline;gap:6px;}
 .rnum{font-size:60px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1;color:#fff;}
 .rpts{font-size:13px;color:rgba(255,255,255,.4);}
-.rlv{font-size:20px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.2;}
+.rlv{font-size:28px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.3;word-break:break-word;}
 .rhi{display:flex;flex-direction:column;gap:7px;}
 .rhi-row{display:flex;align-items:flex-start;gap:8px;}
 .rhi-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;margin-top:6px;opacity:.8;}
-.rhi-txt{font-size:15px;font-weight:600;color:#fff;line-height:1.4;}
+.rhi-txt{font-size:26px;font-weight:500;color:#fff;line-height:1.6;word-break:break-word;}
 .rbd{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;}
-.mbadge{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:3px 7px;border-radius:5px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.12);}
-.rbox.c0 .rnum,.rbox.c0 .rlv{color:#5DD6A0;}
-.rbox.c1 .rnum,.rbox.c1 .rlv{color:#F5C842;}
-.rbox.c2{background:#7A3C00;}.rbox.c2 .rnum,.rbox.c2 .rlv{color:#FFAA60;}
-.rbox.c3{background:#7A0C0C;}.rbox.c3 .rnum,.rbox.c3 .rlv{color:#F9A0A0;}
+.mbadge{font-size:11px;font-family:'IBM Plex Mono',monospace;padding:3px 9px;border-radius:6px;font-weight:700;background:#fff;}
+.rbox.c0 .mbadge{color:#0F5C35;}
+.rbox.c1 .mbadge{color:#7A5500;}
+.rbox.c2 .mbadge{color:#DC5048;}
+.rbox.c0{background:#0F5C35;}.rbox.c0 .rnum,.rbox.c0 .rlv{color:#5DD6A0;}.rbox.c0 .rhi-dot{background:#5DD6A0;}
+.rbox.c1{background:#FED32B;}.rbox.c1 .rnum,.rbox.c1 .rlv{color:#5C3D00;}.rbox.c1 .rhi-dot{background:#5C3D00;}.rbox.c1 .rhi-txt{color:#3D2800;}.rbox.c1 .rpts{color:rgba(0,0,0,.45);}.rbox.c1 .r-left{border-right-color:rgba(0,0,0,.15);}
+.rbox.c2{background:#DC5048;}.rbox.c2 .rnum,.rbox.c2 .rlv{color:#fff;}.rbox.c2 .rhi-dot{background:#fff;}.rbox.c2 .rhi-txt{color:#fff;}.rbox.c2 .rpts{color:rgba(255,255,255,.6);}.rbox.c2 .r-left{border-right-color:rgba(255,255,255,.2);}
 
 /* PC RIGHT PANEL */
-.pc-right{display:none;}
 @media(min-width:900px){
-  .pc-right{display:block;}
-  .pc-right .rbox{position:sticky;top:16px;margin-bottom:0;}
+
 }
 .result-mob{display:block;}
-@media(min-width:900px){.result-mob{display:none;}}
 
 /* ── SAVE BTN ── */
 .save-btn{width:100%;background:var(--gold);color:var(--navy-dark);border:none;border-radius:11px;padding:14px;font-size:15px;font-weight:700;font-family:'Sarabun',sans-serif;cursor:pointer;margin-top:14px;margin-bottom:6px;box-shadow:0 2px 8px rgba(200,168,75,.3);}
@@ -336,28 +334,28 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
             <div class="fc">
               <div class="fh"><div><div class="flabel">1. อุณหภูมิ</div><div class="funit">°C</div></div><span class="badge b-n" id="b-t">—</span></div>
               <input class="finput" type="number" inputmode="decimal" id="f-temp" placeholder="36.5" step="0.1" oninput="calc()">
-              <div class="fhint">≤35/≥38.6=2 · 35.1–36/38.1–38.5=1 · 36.1–38=0</div>
+              <div class="fhint">≤35/≥38.6=2 , 35.1–36/38.1–38.5=1 , 36.1–38=0</div>
             </div>
             <div class="fc">
               <div class="fh"><div><div class="flabel">2. ชีพจร</div><div class="funit">BPM</div></div><span class="badge b-n" id="b-p">—</span></div>
               <input class="finput" type="number" inputmode="numeric" id="f-pulse" placeholder="72" oninput="calc()">
-              <div class="fhint">≤40/≥130=3 · 110–129=2 · 41–50/91–110=1 · 51–90=0</div>
+              <div class="fhint">≤40/≥130=3 , 110–129=2 , 41–50/91–110=1 , 51–90=0</div>
             </div>
             <div class="fc">
               <div class="fh"><div><div class="flabel">3. อัตราหายใจ</div><div class="funit">ครั้ง/นาที</div></div><span class="badge b-n" id="b-r">—</span></div>
               <input class="finput" type="number" inputmode="numeric" id="f-rr" placeholder="16" oninput="calc()">
-              <div class="fhint">≤8/≥28=3 · 21–27=2 · 9–14=1 · 15–20=0</div>
+              <div class="fhint">≤8/≥28=3 , 21–27=2 , 9–14=1 , 15–20=0</div>
             </div>
             <div class="fc">
               <div class="fh"><div><div class="flabel">4. Blood Pressure</div><div class="funit">พิมพ์ SBP/DBP · คำนวนเฉพาะ SBP (mmHg)</div></div><span class="badge b-n" id="b-bp">—</span></div>
               <input class="finput" type="text" inputmode="numeric" id="f-bp" placeholder="120/80" oninput="parseBP()">
               <div class="bphint" id="bph"></div>
-              <div class="fhint">SBP: ≤90/≥220=3 · 91–100=2 · 101–110=1 · 111–219=0</div>
+              <div class="fhint">SBP: ≤90/≥220=3 , 91–100=2 , 101–110=1 , 111–219=0</div>
             </div>
             <div class="fc">
               <div class="fh"><div><div class="flabel">5. Oxygen Saturation</div><div class="funit">%</div></div><span class="badge b-n" id="b-spo2">—</span></div>
               <input class="finput" type="number" inputmode="numeric" id="f-spo2" placeholder="98" oninput="calc()">
-              <div class="fhint">≤90=3 · 91–93=2 · 94–95=1 · ≥96=0</div>
+              <div class="fhint">≤90=3 , 91–93=2 , 94–95=1 , ≥96=0</div>
             </div>
             <div class="fc">
               <div class="fh"><div><div class="flabel">6. Supplement O₂</div></div><span class="badge b-n" id="b-o2">—</span></div>
@@ -381,21 +379,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <button class="save-btn" onclick="save()">บันทึกการประเมิน</button>
           <div class="reset-lnk" onclick="resetF()">ล้างค่าทั้งหมด</div>
         </div>
-        <!-- PC result panel -->
-        <div class="pc-right">
-          <div class="rbox c0" id="rbox-pc">
-            <div class="r-left">
-              <div class="rlabel">MEWS</div>
-              <div class="rrow"><div class="rnum" id="rnum-pc">—</div></div>
-              <div class="rpts">คะแนน</div>
-              <div class="rbd" id="rbd-pc"></div>
-            </div>
-            <div class="r-right">
-              <div class="rlv" id="rlv-pc">กรอกข้อมูล<br>เพื่อคำนวน</div>
-              <div class="rhi" id="rhi-pc"></div>
-            </div>
-          </div>
-        </div>
+      </div>
       </div>
     </div><!-- /assess -->
 
@@ -460,11 +444,11 @@ function sP(v){if(v<=40||v>=130)return 3;if(v>=110&&v<=129)return 2;if((v>=41&&v
 function sR(v){if(v<=8||v>=28)return 3;if(v>=21&&v<=27)return 2;if(v>=9&&v<=14)return 1;return 0;}
 function sSBP(v){if(v<=90||v>=220)return 3;if(v>=91&&v<=100)return 2;if(v>=101&&v<=110)return 1;return 0;}
 function sSO(v){if(v<=90)return 3;if(v>=91&&v<=93)return 2;if(v>=94&&v<=95)return 1;return 0;}
-function risk(t){
+function risk(t,hasAny3,ert3items){
+  if(hasAny3||t>=6)return{c:'c2',g:'g2',sp:'p2',l:'ความเสี่ยงสูง — Call ERT',h:'Call ERT ทันที · ให้การดูแลเบื้องต้นระหว่างรอทีม'+(ert3items&&ert3items.length?' · พบค่าวิกฤต: '+ert3items.join(', '):'')};
   if(t<=0)return{c:'c0',g:'g0',sp:'p0',l:'ปกติ',h:''};
-  if(t<=2)return{c:'c0',g:'g0',sp:'p0',l:'ปกติ',h:'รายงาน In charge nurse · ประเมินอาการซ้ำ'};
-  if(t<=5)return{c:'c1',g:'g1',sp:'p1',l:'เฝ้าระวัง',h:'In charge nurse ประเมินซ้ำ · รายงานแพทย์เวร/เจ้าของไข้ · วัด V/S, SpO₂ ทุก 30 นาที (ชั่วโมงแรก)'};
-  return{c:'c2',g:'g2',sp:'p2',l:'ความเสี่ยงสูง — ตาม ERT',h:'ตาม ERT · ให้การดูแลเบื้องต้นระหว่างรอทีม'};
+  if(t<=2)return{c:'c0',g:'g0',sp:'p0',l:'ปกติ',h:'รายงาน In charge nurse , ประเมินอาการซ้ำ'};
+  return{c:'c1',g:'g1',sp:'p1',l:'เฝ้าระวัง',h:'In charge nurse ประเมินซ้ำ , รายงานแพทย์เวร/เจ้าของไข้ , วัด V/S, SpO₂ ทุก 30 นาที (ชั่วโมงแรก)'};
 }
 
 function getBP(){var r=(document.getElementById('f-bp').value||'').trim();var p=r.split('/');return{sbp:parseFloat(p[0]),dbp:parseFloat(p[1]||''),raw:r};}
@@ -504,15 +488,20 @@ function badge(id,s){
 
 function updBox(bid,nid,lid,hid,did,sc,arr){
   var box=document.getElementById(bid);if(!box)return;
-  if(!arr.length){box.className='rbox c0';document.getElementById(nid).textContent='—';document.getElementById(lid).textContent='กรอกข้อมูลเพื่อคำนวน';document.getElementById(hid).textContent='';document.getElementById(did).innerHTML='';return;}
+  if(!arr.length){box.className='rbox c0';document.getElementById(nid).textContent='—';document.getElementById(lid).textContent='กรอกข้อมูลเพื่อคำนวน';document.getElementById(hid).innerHTML='';document.getElementById(did).innerHTML='';return;}
   var tot=arr.reduce(function(a,b){return a+b;},0);
-  var rk=risk(tot);
+  var paramNames=['Temp','Pulse','RR','SBP','SpO₂','O₂','AVPU'];
+  var paramVals=[sc.temp,sc.pulse,sc.rr,sc.sbp,sc.spo2,sc.o2,sc.avpu];
+  var ert3items=[];
+  for(var i=0;i<paramVals.length;i++){if(paramVals[i]===3)ert3items.push(paramNames[i]);}
+  var hasAny3=ert3items.length>0;
+  var rk=risk(tot,hasAny3,ert3items);
   box.className='rbox '+rk.c;
   document.getElementById(nid).textContent=tot;
   document.getElementById(lid).textContent=rk.l;
   document.getElementById(hid).innerHTML=rk.h?rk.h.split(' · ').map(function(s){return'<div class="rhi-row"><div class="rhi-dot"></div><div class="rhi-txt">'+s+'</div></div>';}).join(''):'';
-  var lb=['T','HR','RR','SBP','SpO₂','O₂','AVPU'];
-  var vs=[sc.temp,sc.pulse,sc.rr,sc.sbp,sc.spo2,sc.o2,sc.avpu];
+  var lb=['T','HR','RR','SBP','SpO₂','AVPU'];
+  var vs=[sc.temp,sc.pulse,sc.rr,sc.sbp,sc.spo2,sc.avpu];
   var h='';
   for(var i=0;i<lb.length;i++){if(vs[i]!==null){var col=vs[i]===0?'#5DD6A0':vs[i]===1?'#F5C842':vs[i]===2?'#F5944A':'#F56060';h+='<span class="mbadge" style="color:'+col+'">'+lb[i]+' '+vs[i]+'</span>';}}
   document.getElementById(did).innerHTML=h;
@@ -524,7 +513,7 @@ function calc(){
   badge('b-bp',sc.sbp);badge('b-spo2',sc.spo2);badge('b-o2',sc.o2);badge('b-av',sc.avpu);
   var arr=[sc.temp,sc.pulse,sc.rr,sc.sbp,sc.spo2,sc.o2,sc.avpu].filter(function(x){return x!==null;});
   updBox('rbox-m','rnum-m','rlv-m','rhi-m','rbd-m',sc,arr);
-  updBox('rbox-pc','rnum-pc','rlv-pc','rhi-pc','rbd-pc',sc,arr);
+
 }
 
 function toggleO2(){
@@ -617,10 +606,10 @@ function resetF(){
   document.getElementById('f-o2').style.display='none';
   document.querySelectorAll('input[name="avg"]').forEach(function(r){r.checked=false;});
   ['b-t','b-p','b-r','b-bp','b-spo2','b-o2','b-av'].forEach(function(id){badge(id,null);});
-  ['rbox-m','rbox-pc'].forEach(function(id){var b=document.getElementById(id);if(b)b.className='rbox c0';});
-  ['rnum-m','rnum-pc'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent='—';});
-  ['rlv-m','rlv-pc'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent='กรอกข้อมูลเพื่อคำนวน';});
-  ['rhi-m','rhi-pc','rbd-m','rbd-pc'].forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML='';});
+  var b=document.getElementById('rbox-m');if(b)b.className='rbox c0';
+  var en=document.getElementById('rnum-m');if(en)en.textContent='—';
+  var el=document.getElementById('rlv-m');if(el)el.textContent='กรอกข้อมูลเพื่อคำนวน';
+  ['rhi-m','rbd-m'].forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML='';});
   editId=null;renderSb();
   var d=new Date();
   document.getElementById('adate').value=d.toISOString().split('T')[0];
