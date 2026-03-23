@@ -745,69 +745,74 @@ var syncEnabled = true;
 var pendingSync = [];
 
 /* ── Google Sheets Sync ── */
-function sheetsPost(payload) {
-  return fetch(SHEETS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  }).catch(function(e){ console.warn('Sheets offline:', e); });
+function sheetsCall(params, callback) {
+  var qs = Object.keys(params).map(function(k){
+    return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);
+  }).join('&');
+  var url = SHEETS_URL + '?' + qs;
+  fetch(url, {method:'GET', mode:'cors'})
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if(callback) callback(d); })
+    .catch(function(e){ console.warn('Sheets error:', e); if(callback) callback(null); });
 }
 
-function sheetsGet(payload) {
-  return fetch(SHEETS_URL, {
-    method: 'POST',
-    mode: 'cors',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  }).then(function(r){ return r.json(); }).catch(function(){ return null; });
+function sheetsPost(payload) {
+  sheetsCall(payload, null);
+}
+
+function sheetsGet(payload, callback) {
+  sheetsCall(payload, callback);
 }
 
 function syncSaveRecord(rec) {
   if(!currentCoE || !syncEnabled) return;
   var sc = rec.scores;
-  sheetsPost({
+  sheetsCall({
     action: 'save',
     coe: currentCoE.name,
     datetime: rec.datetime,
-    patientName: pt.name||'',
+    patient: pt.name||'',
     hn: pt.hn||'',
     total: rec.total,
     level: rec.risk.l,
-    temp: sc.tv, pulse: sc.pv, rr: sc.rv,
-    sbp: sc.bpr||sc.sv, spo2: sc.ov,
-    o2: sc.o2amt||(sc.o2sel==='none'?'None':''), avpu: sc.av,
+    temp: sc.tv||'', pulse: sc.pv||'', rr: sc.rv||'',
+    sbp: sc.bpr||sc.sv||'', spo2: sc.ov||'',
+    o2: sc.o2amt||(sc.o2sel==='none'?'None':''), avpu: sc.av||'',
     note: rec.note||''
+  }, function(res){
+    if(res && res.status==='ok') showSyncToast('บันทึกขึ้น Google Sheets แล้ว');
   });
 }
 
 function syncDeleteRecord(rec) {
   if(!currentCoE || !syncEnabled) return;
-  sheetsPost({action:'delete', coe:currentCoE.name, datetime:rec.datetime});
+  sheetsCall({action:'delete', coe:currentCoE.name, datetime:rec.datetime}, null);
 }
 
 function syncLoadRecords(callback) {
   if(!currentCoE || !syncEnabled){ callback(null); return; }
   showSyncStatus('กำลังโหลดข้อมูลจาก Google Sheets...');
-  sheetsGet({action:'getAll', coe:currentCoE.name}).then(function(res){
+  sheetsCall({action:'getAll', coe:currentCoE.name}, function(res){
     hideSyncStatus();
-    if(res && res.status==='ok' && res.data && res.data.length>1){
-      var rows = res.data.slice(1); // skip header
-      var loaded = rows.map(function(r,i){
+    if(res && res.status==='ok' && res.data && res.data.length>0){
+      var loaded = res.data.map(function(r,i){
+        var tot = parseInt(r[4])||0;
         return {
           id: 'gs_'+(Date.now()+i),
-          datetime: r[1]||'',
-          note: r[13]||'',
-          total: parseInt(r[4])||0,
-          risk: buildRisk(parseInt(r[4])||0),
+          datetime: String(r[1]||''),
+          note: String(r[13]||''),
+          total: tot,
+          risk: buildRisk(tot),
           scores: {
-            tv:r[6],pv:r[7],rv:r[8],sv:'',bpr:r[9],ov:r[10],
-            o2amt:r[11],o2sel:r[11]==='None'?'none':'yes',av:r[12],
+            tv:String(r[6]||''),pv:String(r[7]||''),rv:String(r[8]||''),
+            sv:'',bpr:String(r[9]||''),ov:String(r[10]||''),
+            o2amt:String(r[11]||''),o2sel:r[11]==='None'?'none':'yes',
+            av:String(r[12]||''),
             temp:null,pulse:null,rr:null,sbp:null,spo2:null,o2:null,avpu:null
           }
         };
       }).filter(function(r){ return r.datetime; });
-      callback(loaded);
+      callback(loaded.length ? loaded : null);
     } else { callback(null); }
   });
 }
@@ -826,6 +831,13 @@ function showSyncStatus(msg) {
 function hideSyncStatus() {
   var el = document.getElementById('sync-status');
   if(el) el.style.display='none';
+}
+function showSyncToast(msg){
+  var el=document.getElementById('sync-status');
+  if(!el)return;
+  el.textContent='☁️ '+msg;
+  el.style.display='block';
+  setTimeout(function(){el.style.display='none';},2500);
 }
 
 
