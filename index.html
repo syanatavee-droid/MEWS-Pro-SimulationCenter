@@ -251,9 +251,54 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--navy);color:#fff;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:500;z-index:500;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,40,112,.3);}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(min-width:900px){.toast{bottom:24px;}}
+
+.coe-btn{border:1.5px solid;border-radius:14px;padding:18px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .15s;font-family:'Sarabun',sans-serif;}
+.coe-btn:hover{transform:scale(1.03);opacity:.95;}
+.coe-btn:active{transform:scale(.97);}
+.coe-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.coe-name{font-size:15px;font-weight:700;color:#fff;line-height:1.1;}
+.coe-sub{font-size:11px;color:rgba(255,255,255,.6);}
 </style>
 </head>
 <body>
+
+<div id="sync-status" style="display:none;position:fixed;top:0;left:0;right:0;background:#003B8E;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:2000;font-family:'Sarabun',sans-serif;">กำลังโหลด...</div>
+<!-- CoE Selector Screen -->
+<div id="coe-screen" style="position:fixed;inset:0;background:#002870;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;padding:24px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+    <div style="width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6L12 2z" fill="white" opacity=".9"/><line x1="12" y1="9" x2="12" y2="15" stroke="#002870" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="12" x2="15" y2="12" stroke="#002870" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+      <div style="font-size:20px;font-weight:800;color:#fff;font-family:'Sarabun',sans-serif;">MEWS <span style="color:#C8A84B;">Pro</span></div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.6px;font-family:'Sarabun',sans-serif;">Simulation Center</div>
+    </div>
+  </div>
+  <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:32px;font-family:'Sarabun',sans-serif;">เลือกหน่วยงาน Center of Excellence</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:420px;">
+    <button class="coe-btn" onclick="selectCoE('cancer','CoE Cancer','0F5C35','5DD6A0')" style="background:#0F5C35;border-color:#1A7F5A;">
+      <div class="coe-icon" style="background:rgba(93,214,160,.2);">🩺</div>
+      <div class="coe-name">CoE Cancer</div>
+      <div class="coe-sub">มะเร็งวิทยา</div>
+    </button>
+    <button class="coe-btn" onclick="selectCoE('trauma','CoE Trauma','7A3C00','FFAA60')" style="background:#7A3C00;border-color:#B84800;">
+      <div class="coe-icon" style="background:rgba(255,170,96,.2);">🦴</div>
+      <div class="coe-name">CoE Trauma</div>
+      <div class="coe-sub">อุบัติเหตุ</div>
+    </button>
+    <button class="coe-btn" onclick="selectCoE('neuro','CoE Neuro','003B8E','8EB8F0')" style="background:#003B8E;border-color:#1A55B0;">
+      <div class="coe-icon" style="background:rgba(142,184,240,.2);">🧠</div>
+      <div class="coe-name">CoE Neuro</div>
+      <div class="coe-sub">ประสาทวิทยา</div>
+    </button>
+    <button class="coe-btn" onclick="selectCoE('heart','CoE Heart','7A0C0C','F9A0A0')" style="background:#7A0C0C;border-color:#AC1C1C;">
+      <div class="coe-icon" style="background:rgba(249,160,160,.2);">❤️</div>
+      <div class="coe-name">CoE Heart</div>
+      <div class="coe-sub">โรคหัวใจ</div>
+    </button>
+  </div>
+</div>
+
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -273,7 +318,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       <button class="ttab" id="tt-records" onclick="go('records')">🗂 ประวัติ</button>
       <button class="ttab" id="tt-compare" onclick="go('compare')">📈 เปรียบเทียบ</button>
     </div>
-    <div class="tdate" id="hdate"></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span id="coe-badge" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:99px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Sarabun',sans-serif;cursor:pointer;" onclick="switchCoE()"></span><div class="tdate" id="hdate"></div></div>
   </div>
 </div>
 
@@ -535,7 +580,7 @@ function save(){
   var rec={id:editId||Date.now().toString(),datetime:dt,note:document.getElementById('anote').value,total:tot,risk:rk,scores:sc};
   if(editId){var i=recs.findIndex(function(r){return r.id===editId;});if(i>=0)recs[i]=rec;editId=null;}
   else recs.push(rec);
-  localStorage.setItem('mews_r',JSON.stringify(recs));
+  if(currentCoE)localStorage.setItem('mews_r_'+currentCoE.id,JSON.stringify(recs));
   renderSb();renderRecs();
   toast('บันทึกสำเร็จ — MEWS: '+tot+' ('+rk.l+')');
   resetF();
@@ -563,7 +608,7 @@ function loadRec(id){
 function delRec(id,e){
   e.stopPropagation();
   recs=recs.filter(function(r){return r.id!==id;});
-  localStorage.setItem('mews_r',JSON.stringify(recs));
+  if(currentCoE)localStorage.setItem('mews_r_'+currentCoE.id,JSON.stringify(recs));
   renderSb();renderRecs();toast('ลบแล้ว');
 }
 
@@ -630,7 +675,7 @@ function closeM(){document.getElementById('pt-modal').classList.remove('on');}
 function closeMbg(e){if(e.target===document.getElementById('pt-modal'))closeM();}
 function savePt(){
   pt={name:document.getElementById('m-name').value,hn:document.getElementById('m-hn').value,ward:document.getElementById('m-ward').value};
-  localStorage.setItem('mews_p',JSON.stringify(pt));updPt();closeM();toast('บันทึกข้อมูลผู้ป่วยแล้ว');
+  if(currentCoE)localStorage.setItem('mews_p_'+currentCoE.id,JSON.stringify(pt));updPt();closeM();toast('บันทึกข้อมูลผู้ป่วยแล้ว');
 }
 function updPt(){
   var name=pt.name||'กดเพื่อเพิ่มข้อมูลผู้ป่วย';
@@ -689,10 +734,152 @@ function doExport(){
   toast('Export สำเร็จ');
 }
 
-function clearAll(){if(!confirm('ลบข้อมูลทั้งหมด?'))return;recs=[];localStorage.removeItem('mews_r');renderSb();renderRecs();resetF();toast('ล้างข้อมูลแล้ว');}
+function clearAll(){if(!confirm('ลบข้อมูลทั้งหมด?'))return;recs=[];if(currentCoE)localStorage.removeItem('mews_r_'+currentCoE.id);renderSb();renderRecs();resetF();toast('ล้างข้อมูลแล้ว');}
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},2800);}
 
-init();
+
+var currentCoE = null;
+
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxItiyWletePy79mga8R1Wj_Ja9FhDc3PEhTKUHLlVs_INI2NE37u8CFC895LK4n0AVbg/exec';
+var syncEnabled = true;
+var pendingSync = [];
+
+/* ── Google Sheets Sync ── */
+function sheetsPost(payload) {
+  return fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).catch(function(e){ console.warn('Sheets offline:', e); });
+}
+
+function sheetsGet(payload) {
+  return fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(r){ return r.json(); }).catch(function(){ return null; });
+}
+
+function syncSaveRecord(rec) {
+  if(!currentCoE || !syncEnabled) return;
+  var sc = rec.scores;
+  sheetsPost({
+    action: 'save',
+    coe: currentCoE.name,
+    datetime: rec.datetime,
+    patientName: pt.name||'',
+    hn: pt.hn||'',
+    total: rec.total,
+    level: rec.risk.l,
+    temp: sc.tv, pulse: sc.pv, rr: sc.rv,
+    sbp: sc.bpr||sc.sv, spo2: sc.ov,
+    o2: sc.o2amt||(sc.o2sel==='none'?'None':''), avpu: sc.av,
+    note: rec.note||''
+  });
+}
+
+function syncDeleteRecord(rec) {
+  if(!currentCoE || !syncEnabled) return;
+  sheetsPost({action:'delete', coe:currentCoE.name, datetime:rec.datetime});
+}
+
+function syncLoadRecords(callback) {
+  if(!currentCoE || !syncEnabled){ callback(null); return; }
+  showSyncStatus('กำลังโหลดข้อมูลจาก Google Sheets...');
+  sheetsGet({action:'getAll', coe:currentCoE.name}).then(function(res){
+    hideSyncStatus();
+    if(res && res.status==='ok' && res.data && res.data.length>1){
+      var rows = res.data.slice(1); // skip header
+      var loaded = rows.map(function(r,i){
+        return {
+          id: 'gs_'+(Date.now()+i),
+          datetime: r[1]||'',
+          note: r[13]||'',
+          total: parseInt(r[4])||0,
+          risk: buildRisk(parseInt(r[4])||0),
+          scores: {
+            tv:r[6],pv:r[7],rv:r[8],sv:'',bpr:r[9],ov:r[10],
+            o2amt:r[11],o2sel:r[11]==='None'?'none':'yes',av:r[12],
+            temp:null,pulse:null,rr:null,sbp:null,spo2:null,o2:null,avpu:null
+          }
+        };
+      }).filter(function(r){ return r.datetime; });
+      callback(loaded);
+    } else { callback(null); }
+  });
+}
+
+function buildRisk(t){
+  if(t<=0)return{c:'c0',g:'g0',sp:'p0',l:'ปกติ',h:''};
+  if(t<=2)return{c:'c1',g:'g1',sp:'p1',l:'เสี่ยงต่ำ',h:''};
+  if(t<=5)return{c:'c2',g:'g2',sp:'p2',l:'เฝ้าระวัง',h:''};
+  return{c:'c3',g:'g3',sp:'p3',l:'Call ERT',h:''};
+}
+
+function showSyncStatus(msg) {
+  var el = document.getElementById('sync-status');
+  if(el){ el.textContent = msg; el.style.display='block'; }
+}
+function hideSyncStatus() {
+  var el = document.getElementById('sync-status');
+  if(el) el.style.display='none';
+}
+
+
+function selectCoE(id, name, color, light) {
+  currentCoE = {id, name, color, light};
+  localStorage.setItem('mews_coe', JSON.stringify(currentCoE));sessionStorage.setItem('mews_coe_session', JSON.stringify(currentCoE));
+  document.getElementById('coe-screen').style.display = 'none';
+  // Update topbar CoE badge
+  var badge = document.getElementById('coe-badge');
+  if (badge) {
+    badge.textContent = name;
+    badge.style.background = '#'+light+'33';
+    badge.style.color = '#'+light;
+  }
+  // Load CoE-specific data
+  recs = JSON.parse(localStorage.getItem('mews_r_'+id)||'[]');
+  pt   = JSON.parse(localStorage.getItem('mews_p_'+id)||'{}');
+  updatePatientUI = function(){
+    var nm=pt.name||'กดเพื่อเพิ่มข้อมูลผู้ป่วย';
+    var hn='HN: '+(pt.hn||'—')+(pt.ward?' · '+pt.ward:'');
+    var av=pt.name?pt.name.charAt(0):'?';
+    function s(i,v){var e=document.getElementById(i);if(e)e.textContent=v;}
+    s('sb-av',av);s('sb-name',nm);s('sb-hn',hn);
+    s('mob-av',av);s('mob-name',nm);s('mob-hn',hn);
+  };
+  // Try load from Sheets
+  syncLoadRecords(function(loaded){
+    if(loaded && loaded.length > 0){
+      // Merge: keep local, add sheets records not in local
+      var localIds = recs.map(function(r){return r.datetime;});
+      var newFromSheets = loaded.filter(function(r){return localIds.indexOf(r.datetime)<0;});
+      if(newFromSheets.length>0){
+        recs = recs.concat(newFromSheets);
+        if(currentCoE)localStorage.setItem('mews_r_'+currentCoE.id,JSON.stringify(recs));
+      }
+    }
+    init();
+    renderSb();renderRecs();
+  });
+}
+
+function switchCoE() {
+  // Save current data before switching
+  if(currentCoE){
+    localStorage.setItem('mews_r_'+currentCoE.id, JSON.stringify(recs));
+    localStorage.setItem('mews_p_'+currentCoE.id, JSON.stringify(pt));
+  }
+  document.getElementById('coe-screen').style.display = 'flex';
+}
+
+// Check if CoE already selected this session
+var _savedCoE=JSON.parse(sessionStorage.getItem("mews_coe_session")||"null");
+if(_savedCoE){selectCoE(_savedCoE.id,_savedCoE.name,_savedCoE.color,_savedCoE.light);}else{document.getElementById("coe-screen").style.display="flex";}
+
 </script>
 </body>
 </html>
