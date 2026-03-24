@@ -82,6 +82,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .sb-none{font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:18px 0;}
 .sb-btns{padding:12px 10px calc(12px + var(--sb));border-top:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:7px;}
 .sb-btn{width:100%;font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;padding:9px;border-radius:8px;cursor:pointer;border:none;}
+.btn-sync{background:#1565C0;color:#fff;}
 .btn-gold{background:var(--gold);color:var(--navy-dark);}
 .btn-green{background:rgba(93,214,160,.12);color:#5DD6A0;border:1px solid rgba(93,214,160,.3);}
 .btn-ol{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15);}
@@ -338,6 +339,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       <button class="sb-btn btn-gold" onclick="newAssess()">+ ประเมินใหม่</button>
       <button class="sb-btn btn-green" onclick="doExport()">↓ Export Excel</button>
       <button class="sb-btn btn-ol" onclick="go('compare')">⇄ เปรียบเทียบ</button>
+      <button class="sb-btn btn-sync" id="sync-btn" onclick="syncAllToSheets()">☁ Sync ขึ้น Google Sheets</button>
       <button class="sb-btn btn-red" onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
     </div>
   </div>
@@ -435,6 +437,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       <div class="psub" id="rec-sub">—</div>
       <button class="xbtn" onclick="doExport()"><span>📊</span> Export Excel</button>
       <div id="rec-list"></div>
+      <button class="xbtn" id="sync-btn-mob" onclick="syncAllToSheets()"><span>☁</span> Sync ขึ้น Sheets</button>
       <button class="clrbtn" onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
     </div>
 
@@ -814,6 +817,55 @@ function syncLoadRecords(callback) {
       }).filter(function(r){ return r.datetime; });
       callback(loaded.length ? loaded : null);
     } else { callback(null); }
+  });
+}
+
+
+function syncAllToSheets() {
+  if(!currentCoE){ toast('กรุณาเลือก CoE ก่อน'); return; }
+  if(!recs.length){ toast('ไม่มีข้อมูลที่จะ Sync'); return; }
+  
+  var btn = document.getElementById('sync-btn');
+  var btnM = document.getElementById('sync-btn-mob');
+  if(btn){ btn.textContent='กำลัง Sync...'; btn.disabled=true; }
+  if(btnM){ btnM.textContent='กำลัง Sync...'; btnM.disabled=true; }
+  
+  var total = recs.length;
+  var done = 0;
+  var errors = 0;
+  
+  function finish() {
+    if(btn){ btn.textContent='☁ Sync ขึ้น Google Sheets'; btn.disabled=false; }
+    if(btnM){ btnM.textContent='☁ Sync ขึ้น Sheets'; btnM.disabled=false; }
+    if(errors===0) {
+      toast('Sync สำเร็จ '+total+' รายการขึ้น Google Sheets');
+    } else {
+      toast('Sync เสร็จ '+done+' รายการ (ล้มเหลว '+errors+')');
+    }
+  }
+  
+  var delay = 0;
+  recs.forEach(function(rec) {
+    setTimeout(function(){
+      var sc = rec.scores || {};
+      sheetsCall({
+        action: 'save',
+        coe: currentCoE.name,
+        datetime: rec.datetime||'',
+        patient: pt.name||'',
+        hn: pt.hn||'',
+        total: rec.total||0,
+        level: rec.risk ? rec.risk.l : '',
+        temp: sc.tv||'', pulse: sc.pv||'', rr: sc.rv||'',
+        sbp: sc.bpr||sc.sv||'', spo2: sc.ov||'',
+        o2: sc.o2amt||(sc.o2sel==='none'?'None':''),
+        avpu: sc.av||'', note: rec.note||''
+      }, function(res){
+        if(res && res.status==='ok') done++; else errors++;
+        if(done+errors >= total) finish();
+      });
+    }, delay);
+    delay += 300; // 300ms between each to avoid rate limit
   });
 }
 
