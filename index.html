@@ -46,11 +46,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   .bottom-nav{display:none!important;}
   .ttabs{display:flex;}
   .mobile-pt-bar{display:none!important;}
-  .layout.fullpage .sidebar{width:52px;overflow:hidden;transition:width .2s;}
-  .layout.fullpage .sidebar .sb-logo-area,.layout.fullpage .sidebar .sb-pt,
-  .layout.fullpage .sidebar .sb-list,.layout.fullpage .sidebar .sb-btns{display:none!important;}
-  .layout.fullpage .sidebar .sb-icon-nav{display:flex!important;}
-  .layout.fullpage .content{padding:14px 18px;}
+  .layout.fullpage .sidebar{width:0!important;overflow:hidden;transition:width .25s;padding:0;min-width:0;}
+  .layout.fullpage .content{padding:14px 24px;transition:padding .25s;}
 }
 /* ── MOBILE LAYOUT ── */
 @media(max-width:899px){
@@ -247,13 +244,16 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .clevel{font-size:15px;font-weight:700;margin-top:4px;}
 .cdiff{font-size:28px;font-weight:800;font-family:'IBM Plex Mono',monospace;}
 .g0 .cscore,.g0 .clevel{color:var(--green);}.g1 .cscore,.g1 .clevel{color:#b8a000;}.g2 .cscore,.g2 .clevel{color:#c07000;}.g3 .cscore,.g3 .clevel{color:var(--red);}
-.trend-sec{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:12px;}
-.trend-t{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;}
-.tbars{display:flex;align-items:flex-end;gap:6px;height:70px;}
-.tbw{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
-.tbar{width:100%;border-radius:3px 3px 0 0;min-height:4px;transition:height .3s;}
-.tsc{font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;}
-.tlt{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+.trend-sec{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:16px;margin-bottom:12px;}
+.trend-t{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:14px;}
+.tbars-wrap{position:relative;width:100%;}
+.tbars-grid{position:absolute;top:0;left:0;right:0;bottom:24px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;}
+.tbars-gridline{width:100%;height:1px;background:var(--border);opacity:.5;}
+.tbars{display:flex;align-items:flex-end;gap:8px;height:110px;border-bottom:2px solid var(--border);position:relative;}
+.tbw{display:flex;flex-direction:column;align-items:center;gap:0;flex:1;min-width:0;}
+.tbar{width:85%;border-radius:4px 4px 0 0;min-height:4px;transition:height .3s;}
+.tsc{font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:3px;}
+.tlt{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;white-space:nowrap;margin-top:5px;transform:rotate(-30deg);transform-origin:left top;display:block;height:22px;}
 .cnone{text-align:center;color:var(--muted);padding:40px;font-size:13px;}
 
 /* ── MODAL ── */
@@ -498,7 +498,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       <div id="cmp-content"></div>
       <div class="trend-sec" id="trend-sec" style="display:none">
         <div class="trend-t">แนวโน้ม MEWS Score ทุกช่วงเวลา</div>
-        <div class="tbars" id="tbars"></div>
+        <div class="tbars-wrap"><div class="tbars" id="tbars"></div></div>
       </div>
     </div>
 
@@ -531,7 +531,7 @@ var editId=null;
 
 function init(){
   var d=new Date();
-  document.getElementById('adate').value=d.toISOString().split('T')[0];
+  document.getElementById('adate').value=d.toLocaleDateString('en-CA',{timeZone:'Asia/Bangkok'});
   document.getElementById('atime').value=d.toTimeString().slice(0,5);
   document.getElementById('hdate').textContent=d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short',year:'2-digit'});
   updPt();renderSb();renderRecs();
@@ -549,6 +549,22 @@ function risk(t,hasAny3,ert3items){
   if(t<=2)return{c:'c1',g:'g1',sp:'p1',l:'เสี่ยงต่ำ',h:'รายงาน In-charge nurse , In-charge nurse ประเมินอาการซ้ำและติดตามอาการใกล้ชิดขึ้นทุก 2 ชั่วโมง , อาจพิจารณารายงานแพทย์เจ้าของไข้ตามความเหมาะสม'};
   if(t<=5)return{c:'c2',g:'g2',sp:'p2',l:'เฝ้าระวัง',h:'In charge nurse ประเมินซ้ำ , รายงานแพทย์เวร/เจ้าของไข้ , วัด V/S, SpO₂ ทุก 30 นาที (ชั่วโมงแรก)'};
   return{c:'c3',g:'g3',sp:'p3',l:'ความเสี่ยงสูง — Call ERT',h:'Call ERT ทันที , ให้การดูแลเบื้องต้นระหว่างรอทีม'};
+}
+
+
+function fmtDT(raw) {
+  if (!raw) return '';
+  // Try parse ISO or normal
+  var d = new Date(raw.replace(' ', 'T'));
+  if (isNaN(d.getTime())) return raw;
+  // Convert to Thai time (UTC+7)
+  var thai = new Date(d.getTime() + 7*60*60*1000);
+  var dd = String(thai.getUTCDate()).padStart(2,'0');
+  var mm = String(thai.getUTCMonth()+1).padStart(2,'0');
+  var yy = thai.getUTCFullYear();
+  var hh = String(thai.getUTCHours()).padStart(2,'0');
+  var mn = String(thai.getUTCMinutes()).padStart(2,'0');
+  return dd+'/'+mm+'/'+yy+' '+hh+':'+mn;
 }
 
 function syncBP(){
@@ -684,7 +700,7 @@ function renderSb(){
     var n='sn'+(r.total<=0?0:r.total<=2?1:r.total<=5?2:3);
     return'<div class="sb-card '+n+(editId===r.id?' on':'')+'" onclick="loadRec(\''+r.id+'\')">'
       +'<button class="sb-del" onclick="delRec(\''+r.id+'\',event)">✕</button>'
-      +'<div class="sb-ct">'+r.datetime+'</div>'
+      +'<div class="sb-ct">'+fmtDT(r.datetime)+'</div>'
       +'<div style="display:flex;align-items:baseline;gap:6px"><div class="sb-cs">'+r.total+'</div><div class="sb-cl">'+r.risk.l+'</div></div>'
       +(r.note?'<div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px">'+r.note+'</div>':'')
       +'</div>';
@@ -723,7 +739,7 @@ function resetF(){
   ['rhi-m','rbd-m'].forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML='';});
   editId=null;renderSb();
   var d=new Date();
-  document.getElementById('adate').value=d.toISOString().split('T')[0];
+  document.getElementById('adate').value=d.toLocaleDateString('en-CA',{timeZone:'Asia/Bangkok'});
   document.getElementById('atime').value=d.toTimeString().slice(0,5);
 }
 
@@ -759,7 +775,12 @@ function go(name){
   var bn=document.getElementById('bn-'+name);if(bn)bn.classList.add('on');
   // Full-width for compare page
   var layout=document.querySelector('.layout');
-  if(layout){layout.classList.toggle('fullpage', name==='compare');}
+  if(layout){
+    var isCompare = name==='compare';
+    layout.classList.toggle('fullpage', isCompare);
+    var fab = document.getElementById('fab-back');
+    if(fab) fab.style.display = isCompare ? 'flex' : 'none';
+  }
   if(name==='compare')renderCmp();
   if(name==='records')renderRecs();
 }
@@ -770,7 +791,7 @@ function renderCmp(){
   var sub=document.getElementById('cmp-sub');
   if(recs.length<2){c.innerHTML='<div class="cnone">บันทึกอย่างน้อย 2 ครั้งเพื่อเปรียบเทียบ</div>';tr.style.display='none';return;}
   var s=recs.slice().sort(function(a,b){return a.datetime.localeCompare(b.datetime);});
-  if(sub) sub.textContent='เปรียบเทียบ '+(s.length-1)+' คู่ | '+(s.length)+' รายการ';
+  if(sub) sub.textContent='ทั้งหมด '+s.length+' รายการ | parameter เรียงแนวตั้ง เวลาเรียงแนวนอน';
   var pm=[
     {k:'bpr',l:'BP (SBP/DBP)',sk:'sbp'},
     {k:'tv',l:'อุณหภูมิ (°C)',sk:'temp'},
@@ -803,61 +824,66 @@ function renderCmp(){
     return'color:var(--green)';
   }
 
-  var pairs='';
-  for(var i=0;i<s.length-1;i++){
-    var a=s[i],b=s[i+1];
-    var td=b.total-a.total;
-    var tdSign=td>0?'▲':td<0?'▼':'';
-    var tdColor=td>0?'color:var(--red)':td<0?'color:var(--green)':'color:var(--muted)';
-    var diffHtml=td!==0?'<span class="cdiff" style="'+tdColor+'">'+tdSign+' +'.replace('+ -','')+Math.abs(td)+'</span>':'';
-    var rows=pm.map(function(p){
-      var va=gv(a,p.k),vb=gv(b,p.k);
-      var sa=gs(a,p.sk),sb=gs(b,p.sk);
-      var vaD=(va&&va!=='None'?va:'—')+(sa!==null?' <small>('+sa+')</small>':'<small>(-)</small>');
-      var vbD=(vb&&vb!=='None'?vb:'—')+(sb!==null?' <small>('+sb+')</small>':'<small>(-)</small>');
-      return'<div class="crow">'+
-        '<div class="cp">'+p.l+'</div>'+
-        '<div class="cv">'+vaD+'</div>'+
-        '<div class="cv">'+vbD+'</div>'+
-        '<div class="cd">'+dA(va,vb)+sD(sa,sb)+'</div>'+
-      '</div>';
-    }).join('');
-
-    pairs+=
-      '<div style="margin-bottom:28px;">'+
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">'+
-          '<span style="background:var(--navy);color:#fff;border-radius:99px;padding:3px 14px;font-size:12px;font-weight:700;">คู่ที่ '+(i+1)+'</span>'+
-          '<span style="color:var(--muted);font-size:12px;font-family:monospace;">'+(i+1)+' จาก '+(s.length-1)+' คู่</span>'+
-        '</div>'+
-        '<div class="cmp-cards">'+
-          '<div class="ccard">'+
-            '<div class="ccard-top"><div class="ctime">'+a.datetime+'</div><span style="'+lvColor(a.risk&&a.risk.l)+';font-size:13px;font-weight:700">'+(a.risk&&a.risk.l||'')+'</span></div>'+
-            '<div class="cscore" style="'+lvColor(a.risk&&a.risk.l)+'">'+a.total+'</div>'+
-          '</div>'+
-          '<div class="ccard">'+
-            '<div class="ccard-top"><div class="ctime">'+b.datetime+'</div><span style="'+lvColor(b.risk&&b.risk.l)+';font-size:13px;font-weight:700">'+(b.risk&&b.risk.l||'')+'</span></div>'+
-            '<div style="display:flex;align-items:baseline;gap:16px;">'+
-              '<div class="cscore" style="'+lvColor(b.risk&&b.risk.l)+'">'+b.total+'</div>'+
-              diffHtml+
-            '</div>'+
-          '</div>'+
-        '</div>'+
-        '<div class="ctbl">'+
-          '<div class="crow hdr">'+
-            '<div>พารามิเตอร์</div>'+
-            '<div>'+(a.datetime.split(' ')[0]||a.datetime.slice(0,10))+'</div>'+
-            '<div>'+(b.datetime.split(' ')[0]||b.datetime.slice(0,10))+'</div>'+
-            '<div style="text-align:right">ผลต่าง</div>'+
-          '</div>'+
-          rows+
-        '</div>'+
-      '</div>';
+  // Build horizontal table: rows = parameters, columns = each record
+  var thDates='<th style="background:#002870;color:rgba(255,255,255,.6);font-size:11px;padding:10px 14px;text-align:left;white-space:nowrap;position:sticky;left:0;z-index:5;min-width:130px;">พารามิเตอร์</th>';
+  for(var ci=0;ci<s.length;ci++){
+    var r=s[ci];
+    var lvc=lvColor(r.risk&&r.risk.l);
+    var prev=ci>0?s[ci-1]:null;
+    var td2=prev?(r.total-prev.total):null;
+    var diffStr=td2!==null&&td2!==0?(' <span style="font-size:11px;'+(td2>0?'color:#ff8a65':'color:#69f0ae')+';">'+(td2>0?'▲+':'▼')+td2+'</span>'):'';
+    thDates+='<th style="background:#002870;padding:10px 12px;min-width:130px;text-align:center;border-left:1px solid rgba(255,255,255,.1);">'+
+      '<div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px;">'+fmtDT(r.datetime)+'</div>'+
+      '<div style="font-size:22px;font-weight:800;'+lvc+'">'+r.total+diffStr+'</div>'+
+      '<div style="font-size:11px;font-weight:600;'+lvc+';">'+(r.risk&&r.risk.l||'')+'</div>'+
+    '</th>';
   }
 
-  c.innerHTML=pairs;
+  var paramRows=pm.map(function(p,pi){
+    var rowBg=pi%2===0?'background:#fff':'background:#F4F7FC';
+    var firstTd='<td style="'+rowBg+';font-weight:600;font-size:13px;color:#003B8E;padding:10px 14px;white-space:nowrap;position:sticky;left:0;z-index:2;border-right:2px solid #D0DEF0;background:'+(pi%2===0?'#fff':'#F4F7FC')+';">'+p.l+'</td>';
+    var valTds='';
+    for(var vi=0;vi<s.length;vi++){
+      var r=s[vi];
+      var v=gv(r,p.k);
+      var sc=gs(r,p.sk);
+      var scBadge=sc!==null?'<span style="display:inline-block;margin-left:4px;padding:1px 6px;border-radius:5px;font-size:11px;font-weight:700;'+
+        (sc===0?'background:#E2F5EC;color:#0F5C35':sc<=2?'background:#fffde7;color:#5C3D00':sc===3?'background:#bf360c;color:#fff':'background:#fff8e1;color:#4A2800')+
+        '">'+sc+'</span>':'';
+      var prev2=vi>0?gv(s[vi-1],p.k):null;
+      var arrow='';
+      if(v&&prev2&&v!==prev2&&v!=='None'&&prev2!=='None'){
+        var nv=parseFloat(v.split('/')[0]),np=parseFloat(prev2.split('/')[0]);
+        if(!isNaN(nv)&&!isNaN(np)){arrow=nv>np?' <span style="color:#ff6b6b;font-size:11px;">↑</span>':' <span style="color:#51cf66;font-size:11px;">↓</span>';}
+      }
+      valTds+='<td style="'+rowBg+';padding:10px 12px;text-align:center;font-size:14px;font-weight:500;border-left:1px solid #E8EFF9;color:#1A2B4A;">'+(v&&v!=='None'?v:'<span style="color:#bbb">—</span>')+scBadge+arrow+'</td>';
+    }
+    return'<tr>'+firstTd+valTds+'</tr>';
+  }).join('');
+
+  var html='<div style="overflow-x:auto;border-radius:12px;border:1px solid #D0DEF0;margin-bottom:16px;">'+
+    '<table style="width:100%;border-collapse:collapse;min-width:'+(130+s.length*130)+'px;">'+
+      '<thead><tr>'+thDates+'</tr></thead>'+
+      '<tbody>'+paramRows+'</tbody>'+
+    '</table>'+
+  '</div>';
+
+  c.innerHTML=html;
   tr.style.display='block';
   var mx=Math.max.apply(null,s.map(function(r){return r.total;}))||1;
-  document.getElementById('tbars').innerHTML=s.map(function(r){var pct=Math.max(6,Math.round((r.total/Math.max(mx,8))*65));var col=r.total<=0?'#0F5C35':r.total<=2?'#b8a000':r.total<=5?'#c07000':'#bf360c';var lb=r.datetime.split(' ')[1]||r.datetime.slice(5,10);return'<div class="tbw"><div class="tsc" style="color:'+col+'">'+r.total+'</div><div class="tbar" style="height:'+pct+'px;background:'+col+';opacity:.75"></div><div class="tlt">'+lb+'</div></div>';}).join('');
+  var mx2=Math.max.apply(null,s.map(function(r){return r.total;}));
+  document.getElementById('tbars').innerHTML=s.map(function(r){
+    var pct=Math.max(8,Math.round((r.total/Math.max(mx2,8))*95));
+    var col=r.total<=0?'#0F5C35':r.total<=2?'#b8a000':r.total<=5?'#c07000':'#bf360c';
+    var lb=fmtDT(r.datetime);
+    var date=lb.slice(0,10);
+    var time=lb.slice(11,16);
+    return'<div class="tbw">'+
+      '<div class="tsc" style="color:'+col+'">'+r.total+'</div>'+
+      '<div class="tbar" style="height:'+pct+'px;background:'+col+';border-radius:4px 4px 0 0;"></div>'+
+      '<div class="tlt">'+date+'<br>'+time+'</div>'+
+    '</div>';
+  }).join('');
 }
 
 function doExport(){
@@ -1158,5 +1184,9 @@ if(_savedCoE){selectCoE(_savedCoE.id,_savedCoE.name,_savedCoE.color,_savedCoE.li
   </div>
 </div>
 
+
+<button id="fab-back" onclick="go('assess')" style="display:none;position:fixed;bottom:24px;left:20px;z-index:200;background:#003B8E;color:#fff;border:none;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;box-shadow:0 4px 16px rgba(0,59,142,.35);align-items:center;gap:6px;">
+  ← กลับ
+</button>
 </body>
 </html>
