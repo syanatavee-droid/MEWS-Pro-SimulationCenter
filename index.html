@@ -47,7 +47,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   .ttabs{display:flex;}
   .mobile-pt-bar{display:none!important;}
   .layout.fullpage .sidebar{width:0!important;overflow:hidden;transition:width .25s;padding:0;min-width:0;}
-  .layout.fullpage .content{padding:14px 24px;transition:padding .25s;}
+  .layout.fullpage .content{padding:14px 24px;transition:padding .25s;display:flex;flex-direction:column;align-items:center;}
 }
 /* ── MOBILE LAYOUT ── */
 @media(max-width:899px){
@@ -495,8 +495,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
     <div class="page" id="page-compare">
       <div class="ptitle">เปรียบเทียบการประเมิน</div>
       <div class="psub" id="cmp-sub">เปรียบเทียบทุกคู่การประเมิน</div>
-      <div id="cmp-content"></div>
-      <div class="trend-sec" id="trend-sec" style="display:none">
+      <div id="cmp-content" style="width:100%;"></div>
+      <div class="trend-sec" id="trend-sec" style="display:none;max-width:1400px;margin:0 auto 12px;">
         <div class="trend-t">แนวโน้ม MEWS Score ทุกช่วงเวลา</div>
         <div class="tbars-wrap"><div class="tbars" id="tbars"></div></div>
       </div>
@@ -565,6 +565,91 @@ function fmtDT(raw) {
   var hh = String(thai.getUTCHours()).padStart(2,'0');
   var mn = String(thai.getUTCMinutes()).padStart(2,'0');
   return dd+'/'+mm+'/'+yy+' '+hh+':'+mn;
+}
+
+
+/* ── AUTO-SAVE DRAFT ── */
+var autoSaveTimer = null;
+var AUTOSAVE_INTERVAL = 1 * 60 * 1000;
+
+function getDraft() {
+  return {
+    date: document.getElementById('adate') ? document.getElementById('adate').value : '',
+    time: document.getElementById('atime') ? document.getElementById('atime').value : '',
+    note: document.getElementById('anote') ? document.getElementById('anote').value : '',
+    temp: document.getElementById('f-temp') ? document.getElementById('f-temp').value : '',
+    pulse: document.getElementById('f-pulse') ? document.getElementById('f-pulse').value : '',
+    rr: document.getElementById('f-rr') ? document.getElementById('f-rr').value : '',
+    sbp: document.getElementById('f-sbp') ? document.getElementById('f-sbp').value : '',
+    dbp: document.getElementById('f-dbp') ? document.getElementById('f-dbp').value : '',
+    spo2: document.getElementById('f-spo2') ? document.getElementById('f-spo2').value : '',
+    o2: document.getElementById('f-o2') ? document.getElementById('f-o2').value : '',
+    avpu: (function(){ var el=document.querySelector('input[name="avg"]:checked'); return el ? el.value : ''; })(),
+  };
+}
+
+function hasDraftData(d) {
+  return d.temp || d.pulse || d.rr || d.sbp || d.spo2;
+}
+
+function saveDraft() {
+  var d = getDraft();
+  if (!hasDraftData(d)) return;
+  var key = 'mews_draft' + (currentCoE ? '_' + currentCoE.id : '');
+  localStorage.setItem(key, JSON.stringify(d));
+  showAutoSaveToast();
+}
+
+function loadDraft() {
+  var key = 'mews_draft' + (currentCoE ? '_' + currentCoE.id : '');
+  var raw = localStorage.getItem(key);
+  if (!raw) return;
+  try {
+    var d = JSON.parse(raw);
+    if (!hasDraftData(d)) return;
+    if (!confirm('พบข้อมูลที่บันทึกอัตโนมัติไว้\nต้องการโหลดข้อมูลล่าสุดไหมครับ?')) {
+      clearDraft(); return;
+    }
+    if (d.date) { var el=document.getElementById('adate'); if(el) el.value=d.date; }
+    if (d.time) { var el=document.getElementById('atime'); if(el) el.value=d.time; }
+    if (d.note) { var el=document.getElementById('anote'); if(el) el.value=d.note; }
+    if (d.temp) { var el=document.getElementById('f-temp'); if(el) el.value=d.temp; }
+    if (d.pulse) { var el=document.getElementById('f-pulse'); if(el) el.value=d.pulse; }
+    if (d.rr) { var el=document.getElementById('f-rr'); if(el) el.value=d.rr; }
+    if (d.sbp) { var el=document.getElementById('f-sbp'); if(el){ el.value=d.sbp; } }
+    if (d.dbp) { var el=document.getElementById('f-dbp'); if(el){ el.value=d.dbp; } }
+    if (d.sbp||d.dbp) { syncBP(); }
+    if (d.spo2) { var el=document.getElementById('f-spo2'); if(el) el.value=d.spo2; }
+    if (d.avpu) {
+      var rb=document.querySelector('input[name="avg"][value="'+d.avpu+'"]');
+      if(rb) rb.checked=true;
+    }
+    calc();
+    toast('โหลดข้อมูล Auto-save แล้ว');
+  } catch(e) { clearDraft(); }
+}
+
+function clearDraft() {
+  var key = 'mews_draft' + (currentCoE ? '_' + currentCoE.id : '');
+  localStorage.removeItem(key);
+}
+
+function showAutoSaveToast() {
+  var el = document.getElementById('autosave-toast');
+  if (!el) return;
+  var now = new Date();
+  var hh = String(now.getHours()).padStart(2,'0');
+  var mm = String(now.getMinutes()).padStart(2,'0');
+  el.textContent = '💾 Auto-saved ' + hh + ':' + mm;
+  el.style.opacity = '1';
+  setTimeout(function(){ el.style.opacity = '0'; }, 2500);
+}
+
+function startAutoSave() {
+  if (autoSaveTimer) clearInterval(autoSaveTimer);
+  autoSaveTimer = setInterval(function(){
+    saveDraft();
+  }, AUTOSAVE_INTERVAL);
 }
 
 function syncBP(){
@@ -658,7 +743,7 @@ function save(){
   else recs.push(rec);
   if(currentCoE)localStorage.setItem('mews_r_'+currentCoE.id,JSON.stringify(recs));
   renderSb();renderRecs();
-  toast('บันทึกสำเร็จ — MEWS: '+tot+' ('+rk.l+')');
+  toast('บันทึกสำเร็จ — MEWS: '+tot+' ('+rk.l+')');clearDraft();
   resetF();
   if(navigator.vibrate)navigator.vibrate(tot>=5?[100,50,100]:[50]);
 }
@@ -725,7 +810,7 @@ function renderRecs(){
   }).join('');
 }
 
-function resetF(){
+function resetF(){clearDraft();
   ['f-temp','f-pulse','f-rr','f-bp','f-sbp','f-dbp','f-spo2','f-o2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('anote').value='';
   document.getElementById('bph').textContent='';
@@ -841,7 +926,7 @@ function renderCmp(){
 
   var paramRows=pm.map(function(p,pi){
     var rowBg=pi%2===0?'background:#fff':'background:#F4F7FC';
-    var firstTd='<td style="'+rowBg+';font-weight:600;font-size:13px;color:#003B8E;padding:10px 14px;white-space:nowrap;position:sticky;left:0;z-index:2;border-right:2px solid #D0DEF0;background:'+(pi%2===0?'#fff':'#F4F7FC')+';">'+p.l+'</td>';
+    var firstTd='<td style="'+rowBg+';font-weight:600;font-size:13px;color:#003B8E;padding:10px 14px;white-space:nowrap;position:sticky;left:0;z-index:2;border-right:2px solid #D0DEF0;background:'+(pi%2===0?'#fff':'#F4F7FC')+';">' +p.l+'</td>';
     var valTds='';
     for(var vi=0;vi<s.length;vi++){
       var r=s[vi];
@@ -854,15 +939,16 @@ function renderCmp(){
       var arrow='';
       if(v&&prev2&&v!==prev2&&v!=='None'&&prev2!=='None'){
         var nv=parseFloat(v.split('/')[0]),np=parseFloat(prev2.split('/')[0]);
-        if(!isNaN(nv)&&!isNaN(np)){arrow=nv>np?' <span style="color:#ff6b6b;font-size:11px;">↑</span>':' <span style="color:#51cf66;font-size:11px;">↓</span>';}
+        if(!isNaN(nv)&&!isNaN(np)){arrow=nv>np?' <span style="color:#E53935;font-size:16px;font-weight:700;line-height:1;">↑</span>':' <span style="color:#2E7D32;font-size:16px;font-weight:700;line-height:1;">↓</span>';}
       }
       valTds+='<td style="'+rowBg+';padding:10px 12px;text-align:center;font-size:14px;font-weight:500;border-left:1px solid #E8EFF9;color:#1A2B4A;">'+(v&&v!=='None'?v:'<span style="color:#bbb">—</span>')+scBadge+arrow+'</td>';
     }
     return'<tr>'+firstTd+valTds+'</tr>';
   }).join('');
 
+  var tableW=130+s.length*140;
   var html='<div style="overflow-x:auto;border-radius:12px;border:1px solid #D0DEF0;margin-bottom:16px;">'+
-    '<table style="width:100%;border-collapse:collapse;min-width:'+(130+s.length*130)+'px;">'+
+    '<table style="width:100%;border-collapse:collapse;min-width:'+tableW+'px;margin:0 auto;">'+
       '<thead><tr>'+thDates+'</tr></thead>'+
       '<tbody>'+paramRows+'</tbody>'+
     '</table>'+
@@ -1188,5 +1274,6 @@ if(_savedCoE){selectCoE(_savedCoE.id,_savedCoE.name,_savedCoE.color,_savedCoE.li
 <button id="fab-back" onclick="go('assess')" style="display:none;position:fixed;bottom:24px;left:20px;z-index:200;background:#003B8E;color:#fff;border:none;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;box-shadow:0 4px 16px rgba(0,59,142,.35);align-items:center;gap:6px;">
   ← กลับ
 </button>
+<div id="autosave-toast" style="position:fixed;bottom:72px;right:16px;background:rgba(0,59,142,.85);color:#fff;font-size:12px;font-family:'Sarabun',sans-serif;padding:6px 14px;border-radius:99px;opacity:0;transition:opacity .4s;z-index:300;pointer-events:none;backdrop-filter:blur(4px);">💾 Auto-saved</div>
 </body>
 </html>
