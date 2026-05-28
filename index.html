@@ -458,10 +458,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
             <div class="fc">
               <div class="fh"><div><div class="flabel">6. Supplement O₂</div></div><span class="badge b-n" id="b-o2">—</span></div>
               <div class="o2wrap">
-                <div class="o2opt"><input type="radio" name="o2g" id="o2-n" value="none" checked onchange="toggleO2()"><label for="o2-n">ไม่ใช้ (None)</label></div>
-                <div class="o2opt"><input type="radio" name="o2g" id="o2-y" value="yes" onchange="toggleO2()"><label for="o2-y">ใช้ O₂</label></div>
+                <div class="o2opt"><input type="radio" name="o2g" id="o2-n" value="none" checked onchange="toggleO2()"><label for="o2-n">ไม่ใช้ (None) — 0 คะแนน</label></div>
+                <div class="o2opt"><input type="radio" name="o2g" id="o2-y" value="yes" onchange="toggleO2()"><label for="o2-y">ใช้ O₂ — 2 คะแนน</label></div>
               </div>
-              <input class="finput" type="number" inputmode="decimal" id="f-o2" placeholder="L/min (1–15)" min="1" max="15" step="0.5" style="display:none;" oninput="calc()">
+              <input type="hidden" id="f-o2" value="">
             </div>
             <div class="fc full-col">
               <div class="fh"><div><div class="flabel">7. Conscious — AVPU</div></div><span class="badge b-n" id="b-av">—</span></div>
@@ -676,7 +676,8 @@ function scores(){
   var o=parseFloat(document.getElementById('f-spo2').value);
   var av=avpu();
   var o2s=document.querySelector('input[name="o2g"]:checked').value;
-  var o2a=parseFloat(document.getElementById('f-o2').value);
+  var o2sel=document.querySelector('input[name="o2g"]:checked');
+  var o2a=o2sel&&o2sel.value==='yes'?1:NaN;
   return{
     temp:isNaN(t)?null:sT(t),pulse:isNaN(p)?null:sP(p),rr:isNaN(r)?null:sR(r),
     sbp:isNaN(s)?null:sSBP(s),spo2:isNaN(o)?null:sSO(o),
@@ -726,8 +727,7 @@ function calc(){
 
 function toggleO2(){
   var s=document.querySelector('input[name="o2g"]:checked').value;
-  document.getElementById('f-o2').style.display=s==='yes'?'block':'none';
-  if(s==='none')document.getElementById('f-o2').value='';
+  document.getElementById('f-o2').value=s==='yes'?'yes':'';
   calc();
 }
 
@@ -765,7 +765,9 @@ function loadRec(id){
   document.getElementById('adate').value=pts[0]||'';
   document.getElementById('atime').value=pts[1]||'';
   var o2r=document.querySelector('input[name="o2g"][value="'+sc.o2s+'"]');if(o2r)o2r.checked=true;
-  document.getElementById('f-o2').value=sc.o2a||'';toggleO2();
+  var o2isYes=sc.o2sel==='yes'||(sc.o2a&&sc.o2a!=='None'&&sc.o2a!=='');
+  var o2el=document.getElementById(o2isYes?'o2-y':'o2-n');if(o2el)o2el.checked=true;
+  toggleO2();
   if(sc.av){var av=document.querySelector('input[name="avg"][value="'+sc.av+'"]');if(av)av.checked=true;}
   parseBP();calc();go('assess');
 }
@@ -811,11 +813,13 @@ function renderRecs(){
 }
 
 function resetF(){clearDraft();
-  ['f-temp','f-pulse','f-rr','f-bp','f-sbp','f-dbp','f-spo2','f-o2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['f-temp','f-pulse','f-rr','f-bp','f-sbp','f-dbp','f-spo2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('f-o2').value='';
+  var o2none=document.getElementById('o2-n');if(o2none)o2none.checked=true;
   document.getElementById('anote').value='';
   document.getElementById('bph').textContent='';
   document.querySelector('input[name="o2g"][value="none"]').checked=true;
-  document.getElementById('f-o2').style.display='none';
+
   document.querySelectorAll('input[name="avg"]').forEach(function(r){r.checked=false;});
   ['b-t','b-p','b-r','b-bp','b-spo2','b-o2','b-av'].forEach(function(id){badge(id,null);});
   var b=document.getElementById('rbox-m');if(b)b.className='rbox c0';
@@ -883,10 +887,10 @@ function renderCmp(){
     {k:'pv',l:'ชีพจร (BPM)',sk:'pulse'},
     {k:'rv',l:'อัตราหายใจ',sk:'rr'},
     {k:'ov',l:'SpO₂ (%)',sk:'spo2'},
-    {k:'o2amt',l:'O₂ (L/min)',sk:'o2'},
+    {k:'o2sel',l:'Supplement O₂',sk:'o2'},
     {k:'av',l:'AVPU',sk:'avpu'},
   ];
-  function gv(r,k){var v=r.scores&&r.scores[k];if(v!==undefined&&v!==null&&v!=='')return String(v);if(k==='o2amt'){var s=r.scores&&r.scores['o2sel'];return s==='none'?'None':'';}return '';}
+  function gv(r,k){var v=r.scores&&r.scores[k];if(v!==undefined&&v!==null&&v!=='')return String(v);if(k==='o2sel'){var s=r.scores&&r.scores['o2sel'];return s==='yes'||s==='true'?'ใช้ (2)':s==='none'||s===''||!s?'ไม่ใช้ (0)':s;}return '';}
   function gs(r,k){var v=r.scores&&r.scores[k];return(v!==undefined&&v!==null&&v!=='')?Number(v):null;}
   function dA(va,vb){
     if(!va||!vb||va==='None'||vb==='None')return'<span class="deq">—</span>';
